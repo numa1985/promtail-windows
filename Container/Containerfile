@@ -5,13 +5,13 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS downloader
 WORKDIR C:\temp
 
 # Download Promtail binary
-RUN powershell -Command \
-    $PROMTAIL_VERSION = "2.4.1"; \
-    $PROMTAIL_URL = "https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-windows-amd64.zip"; \
+RUN powershell -Command `
+    $PROMTAIL_VERSION = "2.4.1"; `
+    $PROMTAIL_URL = "https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-windows-amd64.zip"; `
     Invoke-WebRequest -Uri $PROMTAIL_URL -OutFile "promtail-windows-amd64.zip"
 
 # Extract Promtail binary
-RUN powershell -Command Expand-Archive -Path 'promtail-windows-amd64.zip' -DestinationPath 'C:\temp'
+RUN powershell -Command Expand-Archive -Path 'C:\temp\promtail-windows-amd64.zip' -DestinationPath 'C:\temp\promtail'
 
 # Final image
 FROM mcr.microsoft.com/windows/servercore:ltsc2019
@@ -20,7 +20,7 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2019
 WORKDIR C:\Promtail
 
 # Copy Promtail binary from downloader stage
-COPY --from=downloader C:\temp\promtail-windows-amd64.exe .
+COPY --from=downloader C:\temp\promtail\promtail-windows-amd64.exe .
 
 # Set entrypoint
 ENTRYPOINT ["promtail-windows-amd64.exe"]
