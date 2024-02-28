@@ -1,19 +1,22 @@
 
 # Stage 1: Build stage
-FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS builder
+#FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS builder
+
+FROM mcr.microsoft.com/windows/servercore:1809-amd64 AS builder
 
 # Set the working directory
 WORKDIR /promtail
 
 # Set build argument for Promtail version
-ARG PROMTAIL_VERSION=2.8.2
+ARG PROMTAIL_VERSION=2.9.4
 
 # Download and extract Promtail
 ADD https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-windows-amd64.exe.zip .
+
 RUN powershell -Command Expand-Archive promtail-windows-amd64.exe.zip -DestinationPath .
 
 # Stage 2: Final stage
-FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
+FROM mcr.microsoft.com/windows/servercore:1809-amd64
 
 # Set labels
 LABEL \
