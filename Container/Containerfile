@@ -42,3 +42,6 @@ RUN powershell -Command Expand-Archive CivetWeb_Win64_V1.16.zip -DestinationPath
 
 # Set the command to run Promtail with Civetweb for metrics and logging to standard out
 ENTRYPOINT ["promtail-windows-amd64.exe", "-server", "-log.format", "json", "-log.encoding", "console"]
+
+# Run CivetWeb alongside Promtail for serving metrics
+CMD ["C:\\civetweb\\CivetWeb.exe", "-document_root", ".", "-ports", "3100"]
