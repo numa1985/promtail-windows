@@ -1,7 +1,5 @@
-
 # Stage 1: Build stage
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS builder
-
 
 # Set the working directory
 WORKDIR /promtail
@@ -33,5 +31,13 @@ COPY --from=builder /promtail/promtail-windows-amd64.exe .
 # Expose the necessary ports
 EXPOSE 3101
 
-# Set the command to run Promtail
-ENTRYPOINT ["promtail-windows-amd64.exe"]
+# Set Civetweb directory
+ARG CIVETWEB_DIR=/civetweb
+
+# Download and extract Civetweb
+ADD https://github.com/civetweb/civetweb/releases/download/v1.17/civetweb-win64.zip .
+
+RUN powershell -Command Expand-Archive civetweb-win64.zip -DestinationPath ${CIVETWEB_DIR}
+
+# Set the command to run Promtail with Civetweb for metrics and logging to standard out
+ENTRYPOINT ["promtail-windows-amd64.exe", "-server", "-log.format", "json", "-log.encoding", "console"]
