@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: diquzart/promtail-win
+  repository: naresh1985/promtail-win
   pullPolicy: Always
   tag: ""
 
