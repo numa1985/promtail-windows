@@ -37,7 +37,8 @@ ARG CIVETWEB_DIR=/civetweb
 # Download and extract Civetweb
 ADD https://github.com/civetweb/civetweb/releases/download/v1.16/CivetWeb_Win64_V1.16.zip .
 
-RUN powershell -Command Expand-Archive civetweb-win64.zip -DestinationPath ${CIVETWEB_DIR}
+# Set the destination path for Civetweb extraction
+RUN powershell -Command Expand-Archive CivetWeb_Win64_V1.16.zip -DestinationPath C:\civetweb
 
 # Set the command to run Promtail with Civetweb for metrics and logging to standard out
 ENTRYPOINT ["promtail-windows-amd64.exe", "-server", "-log.format", "json", "-log.encoding", "console"]
