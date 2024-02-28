@@ -5,9 +5,9 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS downloader
 WORKDIR C:\temp
 
 # Download Promtail binary
+ARG PROMTAIL_VERSION="2.4.1"
 RUN powershell -Command `
-    $PROMTAIL_VERSION = "2.4.1"; `
-    $PROMTAIL_URL = "https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-windows-amd64.zip"; `
+    $PROMTAIL_URL = "https://github.com/grafana/loki/releases/download/v${Env:PROMTAIL_VERSION}/promtail-windows-amd64.zip"; `
     Invoke-WebRequest -Uri $PROMTAIL_URL -OutFile "promtail-windows-amd64.zip"
 
 # Extract Promtail binary
