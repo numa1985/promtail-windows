@@ -35,7 +35,7 @@ EXPOSE 3101
 ARG CIVETWEB_DIR=/civetweb
 
 # Download and extract Civetweb
-ADD https://github.com/civetweb/civetweb/releases/download/v1.17/civetweb-win64.zip .
+ADD https://github.com/civetweb/civetweb/releases/download/v1.16/CivetWeb_Win64_V1.16.zip .
 
 RUN powershell -Command Expand-Archive civetweb-win64.zip -DestinationPath ${CIVETWEB_DIR}
 
