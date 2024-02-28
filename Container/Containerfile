@@ -1,41 +1,26 @@
+# Use a Windows base image
+FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS downloader
 
-# Stage 1: Build stage
-#FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS builder
+# Set working directory
+WORKDIR C:\temp
 
-FROM mcr.microsoft.com/windows/servercore:1809-amd64 AS builder
+# Download Promtail binary
+RUN powershell -Command \
+    $PROMTAIL_VERSION = "2.4.1"; \
+    $PROMTAIL_URL = "https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-windows-amd64.zip"; \
+    Invoke-WebRequest -Uri $PROMTAIL_URL -OutFile "promtail-windows-amd64.zip"
 
-# Set the working directory
-WORKDIR /promtail
+# Extract Promtail binary
+RUN powershell -Command Expand-Archive -Path 'promtail-windows-amd64.zip' -DestinationPath 'C:\temp'
 
-# Set build argument for Promtail version
-ARG PROMTAIL_VERSION=2.9.4
+# Final image
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
 
-# Download and extract Promtail
-ADD https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-windows-amd64.exe.zip .
+# Set working directory
+WORKDIR C:\Promtail
 
-RUN powershell -Command Expand-Archive promtail-windows-amd64.exe.zip -DestinationPath .
+# Copy Promtail binary from downloader stage
+COPY --from=downloader C:\temp\promtail-windows-amd64.exe .
 
-# Stage 2: Final stage
-FROM mcr.microsoft.com/windows/servercore:1809-amd64
-
-# Set labels
-LABEL \
-    Owner="Muhammed Iqbal" \
-    Base="Windows Nano Server LTSC 2022" \
-    Application="Promtail" \
-    Version=${PROMTAIL_VERSION}
-
-# Set the working directory
-WORKDIR /promtail
-
-# Copy the Promtail binary from the builder stage
-COPY --from=builder /promtail/promtail-windows-amd64.exe .
-
-# Copy netapi32.dll from the builder image
-COPY --from=builder /Windows/System32/netapi32.dll /Windows/System32/netapi32.dll
-
-# Expose the necessary ports
-EXPOSE 3101
-
-# Set the command to run Promtail
+# Set entrypoint
 ENTRYPOINT ["promtail-windows-amd64.exe"]

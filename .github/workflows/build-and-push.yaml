@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-and-push:
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
       - name: Checkout repository
@@ -44,4 +44,5 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: |
           docker push ${{ env.DOCKER_HUB_USERNAME }}/promtail-win:${{ env.VERSION }}
+
 
