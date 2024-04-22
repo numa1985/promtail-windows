@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS builder
 WORKDIR /promtail
 
 # Set build argument for Promtail version
-ARG PROMTAIL_VERSION=2.4.1
+ARG PROMTAIL_VERSION=2.8.2
 
 # Download and extract Promtail
 ADD https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-windows-amd64.exe.zip .
